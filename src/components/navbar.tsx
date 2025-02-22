@@ -1,7 +1,9 @@
 import Link from "next/link";
 import {Search, ShoppingCartIcon, UserCircle} from "lucide-react";
+import {useCartStore} from "@/store/cart-store";
 
 export const Navbar = () => {
+    const { cartCount } = useCartStore()
     return (
         <nav className="flex items-center p-4 px-8 bg-[#1e120a] w-full">
             <div className='flex-1'>
@@ -22,8 +24,9 @@ export const Navbar = () => {
                 <Link href="/sign-up" className="text-[#ffe6d6] text-sm">
                     <UserCircle className="w-6 h-6 cursor-pointer" />
                 </Link>
-                <Link href="/cart" className="text-[#ffe6d6] text-sm">
+                <Link href="/cart" className="text-[#ffe6d6] text-sm relative">
                     <ShoppingCartIcon className="w-6 h-6 cursor-pointer" />
+                    <span className='absolute -top-2 -right-3 bg-red-800 text-white text-xs rounded-full px-1'>{cartCount}</span>
                 </Link>
             </div>
         </nav>
