@@ -12,41 +12,57 @@ interface CartState {
     cart: Product[];
     addToCart: (product: Product) => void;
     updateQuantity: (id: number, change: number) => void;
+    removeItem: (id: number) => void;
     cartCount: number;
 }
 
 export const useCartStore = create<CartState>((set) => ({
+    //Initial state
     cart: [],
     cartCount: 0,
 
     addToCart: (product) => {
         set((state) => {
-            //Checking if the product is already in the cart
-            const item = state.cart.find((p) => p.id === product.id)
-            //Updating the cart
+            //check if the product is already in the cart
+            const item = state.cart.find((p) => p.id === product.id);
+
+            //If the product exists, increase its quantity
+            //If it doesn't exist, add it to the cart with a quantity 1
             return {
                 cart: item
                     ? state.cart.map((p) =>
                         p.id === product.id ? { ...p, quantity: p.quantity + 1} : p
                     )
-                    : [...state.cart, {...product, quantity: 1}],
-                //Updating the cart count
+                    : [...state.cart, { ...product, quantity: 1}],
+                //update cart count
                 cartCount: state.cartCount + 1,
-            };
-        });
+            }
+        })
     },
+
 
     updateQuantity: (id, change) => {
         //update the state
         set((state) => ({
-            //Updating the product's quantity
+            //Update the product's quantity
             cart: state.cart.map((p) =>
             p.id === id ? { ...p, quantity: p.quantity + change } : p
             )
-            // Removing products with zero quantity
+            // Remove products with zero quantity
             .filter((p) => p.quantity > 0),
-            //Updating the cart item count
+            //Update the cart item count
             cartCount: Math.max(0, state.cartCount + change),
         }))
+    },
+
+    removeItem: (id) => {
+        set((state) => {
+            //Find the item to remove
+            const itemToRemove = state.cart.find((p) => p.id === id);
+            return {
+                cart: state.cart.filter((p) => p.id !== id),
+                cartCount: state.cartCount - (itemToRemove?.quantity || 0)
+            }
+        })
     }
 }));
